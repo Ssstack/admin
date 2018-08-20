@@ -2,24 +2,23 @@
     <div class="login">
         <el-form class="container" :model="myForm" :rules="rules" ref="myForm">
             <el-form-item>
-                <div>
-                    <img src="../assets/logo.jpg" class="avatar">
-                </div>
+                <img src="../assets/logo.jpg" class="avatar">
             </el-form-item>
             <el-form-item label="" prop="username">
                 <el-input prefix-icon="el-icon-edit" v-model="myForm.username" placeholder="账户">用户名</el-input>
             </el-form-item>
             <el-form-item label="" prop="password">
-                <el-input prefix-icon="el-icon-view" v-model="myForm.password" placeholder="密码">密码</el-input>
+                <el-input type="password" prefix-icon="el-icon-view" v-model="myForm.password" placeholder="密码">密码</el-input>
             </el-form-item>
             <el-form-item>
-                <el-button class="login-btn" type="primary">登录</el-button>
+                <el-button class="login-btn" type="primary" @click="loginSubmit('myForm')">登录</el-button>
             </el-form-item>
         </el-form>
     </div>
 </template>
 
 <script>
+import {checkUser} from '@/api'
 export default {
     data() {
         return {
@@ -37,6 +36,29 @@ export default {
                     { min: 2, max: 8, message: '长度在 2 到 8 个字符', trigger: 'blur' }
                 ]
             }
+        }
+    },
+    methods: {
+        loginSubmit(formName) {
+            // 在前端进行表单验证，只有通过验证才去发送ajax请求
+            this.$refs[formName].validate(valid => {
+                if(valid) {
+                    checkUser(this.myForm).then(res =>  {
+                        // console.log(res)
+                        if(res.meta.status === 200) {
+                            this.$router.push({name: 'Home'})
+                        } else {
+                            this.$message({
+                                type: 'error',
+                                message: res.meta.msg
+                            })
+                        }
+                    })
+                }else {
+                    console.log('校验不通过')
+                }
+            })
+            
         }
     }
 }
