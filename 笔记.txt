@@ -1,0 +1,3 @@
+开发环境： npm run serve
+生产环境： npm run build
+创建一个dist文件夹，将来把这个文件夹部署到服务器就可以了
