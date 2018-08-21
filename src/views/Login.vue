@@ -2,7 +2,7 @@
     <div class="login">
         <el-form class="container" :model="myForm" :rules="rules" ref="myForm">
             <el-form-item>
-                <img src="../assets/logo.jpg" class="avatar">
+                <img src="../assets/logo.png" class="avatar">
             </el-form-item>
             <el-form-item label="" prop="username">
                 <el-input prefix-icon="el-icon-edit" v-model="myForm.username" placeholder="账户">用户名</el-input>
@@ -47,6 +47,8 @@ export default {
                         if(res.meta.status === 200) {
                             // 登录成功，在本地存储token
                             localStorage.setItem('myToken', res.data.token)
+                            // 并且将用户名username保存到vuex状态管理(中介)中   中介调用一下setUsername方法,保存username
+                            this.$store.commit('setUsername', res.data.username)
                             this.$router.push({name: 'Home'})
                         } else {
                             this.$message({
