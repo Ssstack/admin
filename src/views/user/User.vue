@@ -27,19 +27,38 @@
                         border
                         style="width: 100%">
                         <el-table-column
-                            prop=""
-                            label="日期"
-                            width="180">
+                            type="index"
+                            width="50">
                         </el-table-column>
                         <el-table-column
-                            prop=""
+                            prop="username"
                             label="姓名"
                             width="180">
                         </el-table-column>
                         <el-table-column
-                            prop=""
-                            label="地址">
+                            prop="email"
+                            label="邮箱"
+                            width="180">
                         </el-table-column>
+                        <el-table-column
+                            prop="mobile"
+                            label="电话">
+                        </el-table-column>
+                        <el-table-column
+                            label="用户状态">
+                            <template slot-scope="scope">
+                                <el-switch v-model="value"></el-switch>
+                            </template>
+                        </el-table-column>
+                        <el-table-column
+                            label="操作"
+                            width="240">
+                            <template slot-scope="scope">
+                                <el-button size="mini" icon="el-icon-edit" type="primary" plain></el-button>
+                                <el-button size="mini" icon="el-icon-delete" type="danger" plain></el-button>
+                                <el-button size="mini" icon="el-icon-check" type="success" plain></el-button>
+                            </template>
+                        </el-table-column> 
                     </el-table>
                 </template>
             </el-col>
@@ -63,20 +82,41 @@
     </div>
 </template>
 <script>
+import {getUserList} from '@/api'
+
 export default {
     data() {
         return {
             userList: [],
-            currentPage: 1
+            currentPage: 1,
+            value: true
         }
     },
+    mounted() {
+        this.renderList()
+    },
     methods: {
-      handleSizeChange(val) {
-        console.log(`每页 ${val} 条`)
-      },
-      handleCurrentChange(val) {
-        console.log(`当前页: ${val}`)
-      }
+        renderList() {
+            let params = {
+                params: {
+                    query: '',
+                    pagenum: 1,
+                    pagesize: 5
+                }
+            }
+            getUserList(params).then(res => {
+                console.log(res)
+                if(res.meta.status === 200) {
+                    this.userList = res.data.users
+                }
+            })
+        },
+        handleSizeChange(val) {
+            console.log(`每页 ${val} 条`)
+        },
+        handleCurrentChange(val) {
+            console.log(`当前页: ${val}`)
+        }
     }
 }
 </script>

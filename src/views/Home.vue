@@ -79,18 +79,6 @@ export default {
     handleClose(key, keyPath) {
       console.log(key, keyPath);
     }
-  },
-  mounted() {
-    let params = {
-      params: {
-        query: 1,
-        pagenum: 1,
-        pagesize: 5
-      }
-    }
-    getUserList(params).then(res => {
-      console.log(res)
-    })
   }
 }
 </script>
