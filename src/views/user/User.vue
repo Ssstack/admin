@@ -11,8 +11,8 @@
         </el-row>
         <el-row>
             <el-col :span="12">
-                <el-input placeholder="请输入内容">
-                    <el-button slot="append" icon="el-icon-search"></el-button>
+                <el-input placeholder="请输入内容" v-model="searchVal" @keydown.native.enter="queryUser">
+                    <el-button slot="append" icon="el-icon-search" @click="queryUser"></el-button>
                 </el-input> 
             </el-col>
             <el-col :span="12" style="padding-left: 10px">
@@ -70,11 +70,11 @@
                         class="page"
                         @size-change="handleSizeChange"
                         @current-change="handleCurrentChange"
-                        :current-page="currentPage"
+                        :current-page="pagenum"
                         :page-sizes="[1, 2, 4, 8]"
-                        :page-size="4"
+                        :page-size="pagesize"
                         layout="total, sizes, prev, pager, next, jumper"
-                        :total="10">
+                        :total="total">
                     </el-pagination>
                 </div>
             </el-col>
@@ -88,34 +88,48 @@ export default {
     data() {
         return {
             userList: [],
-            currentPage: 1,
-            value: true
+            pagenum: 1,
+            pagesize: 4,
+            total: 0,
+            value: true,
+            searchVal: ''
         }
     },
     mounted() {
+        // 页面一加载，调用渲染数据列表的方法
         this.renderList()
     },
     methods: {
         renderList() {
             let params = {
                 params: {
-                    query: '',
-                    pagenum: 1,
-                    pagesize: 5
+                    // 页面一加载,this.searchVal为空
+                    query: this.searchVal,
+                    pagenum: this.pagenum,
+                    pagesize: this.pagesize
                 }
             }
             getUserList(params).then(res => {
                 console.log(res)
                 if(res.meta.status === 200) {
                     this.userList = res.data.users
+                    this.total = res.data.total
                 }
             })
         },
+        queryUser() {
+            // 当用户输入关键词后，调用查询数据的方法
+            this.renderList()
+        },
         handleSizeChange(val) {
-            console.log(`每页 ${val} 条`)
+            // console.log(`每页 ${val} 条`)
+            this.pagesize = val
+            this.renderList()
         },
         handleCurrentChange(val) {
-            console.log(`当前页: ${val}`)
+            // console.log(`当前页: ${val}`)
+            this.pagenum = val
+            this.renderList()
         }
     }
 }
