@@ -44,8 +44,9 @@ export default {
             this.$refs[formName].validate(valid => {
                 if(valid) {
                     checkUser(this.myForm).then(res =>  {
-                        // console.log(res)
                         if(res.meta.status === 200) {
+                            // 登录成功，在本地存储token
+                            localStorage.setItem('myToken', res.data.token)
                             this.$router.push({name: 'Home'})
                         } else {
                             this.$message({
