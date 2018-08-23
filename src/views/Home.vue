@@ -49,29 +49,26 @@
     </el-container>
   </div>
 </template>
-
 <script>
-import {getUserList} from '@/api'
-
 export default {
   data() {
     return {
       isCollapse: false
-    }
+    };
   },
   methods: {
     // 折叠菜单切换
     toggle() {
-      this.isCollapse = !this.isCollapse
+      this.isCollapse = !this.isCollapse;
     },
     // 退出
     loginOut() {
       // 清除localStorage
-      localStorage.removeItem('myToken')
+      localStorage.removeItem("myToken");
       // 清除用户名
-      localStorage.removeItem('username')
+      localStorage.removeItem("username");
       // 返回首页
-      this.$router.push({name: '/login'})
+      this.$router.push({ name: "/login" });
     },
     handleOpen(key, keyPath) {
       console.log(key, keyPath);
@@ -80,12 +77,12 @@ export default {
       console.log(key, keyPath);
     }
   }
-}
+};
 </script>
 <style lang="scss" scoped>
 .home {
   height: 100%;
-  background-color: #E5E5E5;
+  background-color: #e5e5e5;
   .el-menu-admin:not(.el-menu--collapse) {
     width: 200px;
     min-height: 400px;
@@ -106,7 +103,7 @@ export default {
     background-color: #545c64;
   }
   .logo {
-    height:60px;
+    height: 60px;
     background: url(../assets/cat.jpg) repeat-x;
     background-size: 67px 60px;
     background-color: white;
