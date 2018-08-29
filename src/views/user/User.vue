@@ -192,7 +192,7 @@ export default {
   methods: {
     renderList() {
       // 加载动画
-      this.loading = true;
+      this.loading = false;
       let params = {
         params: {
           // 页面一加载,this.searchVal为空
@@ -202,7 +202,7 @@ export default {
         }
       };
       getUserList(params).then(res => {
-        // console.log(res)
+        console.log(res);
         if (res.meta.status === 200) {
           this.userList = res.data.users;
           this.total = res.data.total;

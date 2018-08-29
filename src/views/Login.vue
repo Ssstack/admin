@@ -18,53 +18,52 @@
 </template>
 
 <script>
-import {checkUser} from '@/api'
+import { checkUser } from "@/api";
 export default {
-    data() {
-        return {
-            myForm: {
-                username: '',
-                password: ''
-            },
-            rules: {
-                username: [
-                    { required: true, message: '请输入用户名', trigger: 'blur' },
-                    { min: 2, max: 10, message: '长度在 2 到 10 个字符', trigger: 'blur' }
-                ],
-                password: [
-                    { required: true, message: '请输入密码', trigger: 'blur' },
-                    { min: 2, max: 8, message: '长度在 2 到 8 个字符', trigger: 'blur' }
-                ]
+  data() {
+    return {
+      myForm: {
+        username: "",
+        password: ""
+      },
+      rules: {
+        username: [
+          { required: true, message: "请输入用户名", trigger: "blur" },
+          { min: 2, max: 10, message: "长度在 2 到 10 个字符", trigger: "blur" }
+        ],
+        password: [
+          { required: true, message: "请输入密码", trigger: "blur" },
+          { min: 2, max: 8, message: "长度在 2 到 8 个字符", trigger: "blur" }
+        ]
+      }
+    };
+  },
+  methods: {
+    loginSubmit(formName) {
+      // 在前端进行表单验证，只有通过验证才去发送ajax请求
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          checkUser(this.myForm).then(res => {
+            if (res.meta.status === 200) {
+              // 登录成功，在本地存储token
+              localStorage.setItem("myToken", res.data.token);
+              // 并且将用户名username保存到vuex状态管理(中介)中   中介调用一下setUsername方法,保存username
+              this.$store.commit("setUsername", res.data.username);
+              this.$router.push({ name: "Home" });
+            } else {
+              this.$message({
+                type: "error",
+                message: res.meta.msg
+              });
             }
+          });
+        } else {
+          console.log("校验不通过");
         }
-    },
-    methods: {
-        loginSubmit(formName) {
-            // 在前端进行表单验证，只有通过验证才去发送ajax请求
-            this.$refs[formName].validate(valid => {
-                if(valid) {
-                    checkUser(this.myForm).then(res =>  {
-                        if(res.meta.status === 200) {
-                            // 登录成功，在本地存储token
-                            localStorage.setItem('myToken', res.data.token)
-                            // 并且将用户名username保存到vuex状态管理(中介)中   中介调用一下setUsername方法,保存username
-                            this.$store.commit('setUsername', res.data.username)
-                            this.$router.push({name: 'Home'})
-                        } else {
-                            this.$message({
-                                type: 'error',
-                                message: res.meta.msg
-                            })
-                        }
-                    })
-                }else {
-                    console.log('校验不通过')
-                }
-            })
-            
-        }
+      });
     }
-}
+  }
+};
 </script>
 
 <style lang="scss" scoped>
@@ -101,4 +100,3 @@ export default {
   }
 }
 </style>
-

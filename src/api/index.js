@@ -54,15 +54,22 @@ export const editUser = params => {
 
 // 删除用户信息
 export const deleteUser = params => {
-  return axios.delete(`users/${params}`).then(res => res.data)
-}
+  return axios.delete(`users/${params}`).then(res => res.data);
+};
 
 // 查询用户角色
-export const getRoleList = params => {
-  return axios.get(`roles`).then(res => res.data)
-}
+export const getRoleList = () => {
+  return axios.get(`roles`).then(res => res.data);
+};
 
 // 分配用户角色
 export const grantRole = params => {
-  return axios.put(`users/${params.id}/role`, {id: params.id, rid: params.rid}).then(res => res.data)
-}
+  return axios
+    .put(`users/${params.id}/role`, { id: params.id, rid: params.rid })
+    .then(res => res.data);
+};
+
+// 获取权限列表
+export const getRightsList = params => {
+  return axios.get(`rights/${params.type}`).then(res => res.data);
+};
