@@ -90,3 +90,8 @@ export const grantRight = (roleId, rids) => {
 export const getMenus = () => {
   return axios.get(`menus`).then(res => res.data);
 }
+
+// 获取商品数据列表
+export const getGoodList = params => {
+  return axios.get(`categories`, {params: params}).then(res => res.data);
+}
