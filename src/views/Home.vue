@@ -16,28 +16,14 @@
               background-color="#545c64"
               text-color="#fff"
               active-text-color="#ffd04b">
-              <el-submenu index="1" active-text-color="#ffd04b">
+              <el-submenu v-for="first in menus" :key="first.id" :index="first.path" active-text-color="#ffd04b">
                 <template slot="title">
                   <i class="el-icon-location"></i>
-                  <span>用户管理</span>
+                  <span>{{ first.authName }}</span>
                 </template>
-                <el-menu-item index="user">
+                <el-menu-item :index="second.path" v-for="second in first.children" :key="second.id">
                   <i class="el-icon-menu"></i>
-                  <span slot="title">用户列表</span>
-                </el-menu-item>
-              </el-submenu>
-              <el-submenu index="2" active-text-color="#ffd04b">
-                <template slot="title">
-                  <i class="el-icon-location"></i>
-                  <span>权限管理</span>
-                </template>
-                <el-menu-item index="rights">
-                  <i class="el-icon-menu"></i>
-                  <span slot="title">权限列表</span>
-                </el-menu-item>
-                <el-menu-item index="roles">
-                  <i class="el-icon-menu"></i>
-                  <span slot="title">角色列表</span>
+                  <span slot="title">{{ second.authName }}</span>
                 </el-menu-item>
               </el-submenu>
             </el-menu>
@@ -65,11 +51,21 @@
   </div>
 </template>
 <script>
+import { getMenus } from "@/api";
 export default {
   data() {
     return {
-      isCollapse: false
+      isCollapse: false,
+      menus: []
     };
+  },
+  created() {
+    getMenus().then(res => {
+      console.log(res);
+      if (res.meta.status === 200) {
+        this.menus = res.data;
+      }
+    })
   },
   methods: {
     // 折叠菜单切换

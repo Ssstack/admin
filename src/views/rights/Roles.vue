@@ -57,46 +57,118 @@
 							<template slot-scope="scope">
 								<el-button size="mini" icon="el-icon-edit" type="primary" plain></el-button>
 								<el-button size="mini" icon="el-icon-delete" type="danger" plain></el-button>
-								<el-button size="mini" icon="el-icon-check" type="success" plain></el-button>
+								<el-button size="mini" icon="el-icon-check" type="success" plain @click="showDialog(scope.row)"></el-button>
 							</template>
 						</el-table-column>
 					</el-table>
 				</template>
 			</el-col>
 		</el-row>
+		<!-- 展示授权对话框 -->
+		<el-dialog title="收货地址" :visible.sync="dialogFormVisible">
+			<div class="tree-con">
+				<el-tree
+					ref="tree"
+					:default-expand-all="true"
+					:data="rightsList"
+					show-checkbox
+					node-key="id"
+					:default-checked-keys="selectRights"
+					:props="defaultProps">
+				</el-tree>
+			</div>
+			<div slot="footer" class="dialog-footer">
+				<el-button @click="dialogFormVisible = false">取 消</el-button>
+				<el-button type="primary" @click="grantSubmit">确 定</el-button>
+			</div>
+		</el-dialog>
 	</div>
 </template>
 <script>
-import { getRoleList, deleteRoleRights } from "@/api";
+import { getRoleList, deleteRoleRights, getRightsList, grantRight } from "@/api";
 export default {
   data() {
     return {
       loading: true,
-      rolesList: []
+			rolesList: [],
+			dialogFormVisible: false,
+			formLabelWidth: "200px",
+			rightsList: [],
+			defaultProps: {
+				children: "children",
+				label: "authName"
+			},
+			selectRights: [],
+			currentRole: {}
     };
-	},
-	mounted() {
-		getRoleList().then(res => {
-			console.log(res.data);
-			if (res.meta.status === 200) {
-				this.rolesList = res.data;
-			}
-		})
-	},
-	methods: {
-		deleteRights(row, rightId) {
-			deleteRoleRights({roleId: row.id, rightId: rightId}).then(res => {
+  },
+  created() {
+    this.initList();
+  },
+  methods: {
+		initList() {
+			getRoleList().then(res => {
+				console.log(res.data);
 				if (res.meta.status === 200) {
-					row.children = res.data;
+					this.rolesList = res.data;
+				}
+			});
+		},
+    deleteRights(row, rightId) {
+      deleteRoleRights({ roleId: row.id, rightId: rightId }).then(res => {
+        if (res.meta.status === 200) {
+          row.children = res.data;
+        } else {
+          this.$message({
+            type: "error",
+            message: res.meta.msg
+          });
+        }
+      });
+		},
+		showDialog(row) {
+			this.dialogFormVisible = true;
+			this.currentRole = row;
+			getRightsList({type: "tree"}).then(res => {
+				console.log(res.data);
+				if (res.meta.status === 200) {
+					this.rightsList = res.data;
 				} else {
 					this.$message({
 						type: "error",
 						message: res.meta.msg
 					})
 				}
+			});
+			// 遍历之前，清空数组
+			this.selectRights.length = 0;
+			// 取出当前点击角色的所有权限，然后遍历到它的第三个children，取出它里面所有项的id，放进selectRights中
+			this.currentRole.children.forEach(first => {
+				if (first.children && first.children !== 0) {
+					first.children.forEach(second => {
+						if (second.children && second.children.length !== 0) {
+							second.children.forEach(third => {
+								this.selectRights.push(third.id);
+							})
+						}
+					})
+				}
+			})
+		},
+		grantSubmit () {
+			let rids = this.$refs.tree.getCheckedKeys().join(",");
+			grantRight(this.currentRole.id, {rids: rids}).then(res => {
+				if (res.meta.status === 200) {
+					this.$message({
+						type: "success",
+						message: res.meta.msg
+					})
+					this.dialogFormVisible = false;
+					this.initList();
+				}
 			})
 		}
-	}
+  }
 };
 </script>
 <style lang="scss" scoped>
@@ -113,9 +185,13 @@ export default {
   width: 50%;
 }
 .roles {
-	.el-tag {
-		margin-bottom: 5px;
-		margin-right: 5px;
-	}
+  .el-tag {
+    margin-bottom: 5px;
+    margin-right: 5px;
+  }
+}
+.tree-con {
+	height: 300px;
+	overflow: auto;
 }
 </style>

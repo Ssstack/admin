@@ -76,5 +76,17 @@ export const getRightsList = params => {
 
 // 删除角色指定权限
 export const deleteRoleRights = params => {
-  return axios.delete(`roles/${params.roleId}/rights/${params.rightId}`, params).then(res => res.data);
+  return axios
+    .delete(`roles/${params.roleId}/rights/${params.rightId}`, params)
+    .then(res => res.data);
 };
+
+// 角色授权
+export const grantRight = (roleId, rids) => {
+  return axios.post(`roles/${roleId}/rights`, rids).then(res => res.data);
+};
+
+// 左侧菜单权限
+export const getMenus = () => {
+  return axios.get(`menus`).then(res => res.data);
+}

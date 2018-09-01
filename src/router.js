@@ -10,6 +10,8 @@ import Roles from "@/views/rights/Roles";
 Vue.use(Router);
 
 export default new Router({
+  // 去除地址栏的 #
+  mode: "history",
   routes: [
     {
       path: "/login",
@@ -28,7 +30,7 @@ export default new Router({
           component: Welcome
         },
         {
-          path: "user",
+          path: "users",
           name: "User",
           component: User
         },
